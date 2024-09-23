@@ -33,7 +33,7 @@ public class Cliente {
     @NotNull(message = "Por favor, digite sua data de nascimento")
     private LocalDate dataNascimento;
 
-    @Size(min = 10, max = 11, message = "Por favor, digite seu telefone apenas com o DDD e os dígitos de seu número de contato.")
+    @Size(min = 10, max = 11, message = "Por favor, digite seu telefone com o DDD e os dígitos de seu número de contato.")
     private String telefone;
 
     private List<Endereco> enderecos = new ArrayList<>();
