@@ -55,10 +55,11 @@ public class ClienteService {
         return item;
     }
 
-    public Cliente updateCliente(UUID id, Cliente novoCliente) throws Exception{
+    public Cliente updateCliente(UUID id, Cliente novoCliente) throws Exception {
         Cliente novoClienteAtualizado = findCliente(id);
         if (novoClienteAtualizado == null)
             return null;
+
         if (!novoClienteAtualizado.getCpf().equals(novoCliente.getCpf())) {
             throw new Exception("Não é permitido alterar o CPF.");
         }
@@ -66,10 +67,11 @@ public class ClienteService {
             throw new Exception("Não é permitido alterar a data de nascimento.");
         }
         for (Cliente c : Clientes) {
-            if (c.getEmail().equals(novoCliente.getEmail())) {
+            if (!c.getId().equals(id) && c.getEmail().equals(novoCliente.getEmail())) {
                 throw new Exception("E-mail já cadastrado.");
             }
         }
+
         novoClienteAtualizado.setNome(novoCliente.getNome());
         novoClienteAtualizado.setEmail(novoCliente.getEmail());
         novoClienteAtualizado.setTelefone(novoCliente.getTelefone());
@@ -89,69 +91,5 @@ public class ClienteService {
     public boolean verificaIdade(LocalDate dataNascimento){
         int idade = Period.between(dataNascimento, LocalDate.now()).getYears();
         return idade >= 18;
-    }
-
-    public Cliente associarEndereco(Endereco endereco, UUID id) throws Exception {
-        Cliente cliente = this.findCliente(id);
-        if (cliente == null) {
-            throw new Exception("O cliente não foi encontrado.");
-        }
-        endereco.setId(UUID.randomUUID());
-        cliente.associarEndereco(endereco);
-        return cliente;
-    }
-
-    public Endereco getEnderecoById(UUID clienteId,UUID  enderecoId) throws Exception{
-            return findEndereco(clienteId, enderecoId);
-    }
-
-    public Endereco findEndereco(UUID clienteId, UUID enderecoId) throws Exception {
-        Cliente cliente = this.findCliente(clienteId);
-        if (cliente == null) {
-            throw new Exception("O cliente não foi encontrado.");
-        }
-        for (Endereco endereco : cliente.getEnderecos()) {
-            if (endereco.getId().equals(enderecoId)) {
-                return endereco;
-            }
-        }
-        throw new Exception("O endereço não foi encontrado.");
-    }
-
-    public Cliente deleteEndereco(UUID id, UUID enderecoId) throws Exception {
-        Cliente cliente = this.findCliente(id);
-        if (cliente == null) {
-            throw new Exception("O cliente não foi encontrado.");
-        }
-        Endereco response = null;
-        for (Endereco endereco : cliente.getEnderecos()) {
-            if (endereco.getId().equals(enderecoId)) {
-                response = endereco;
-                break;
-            }
-        }
-        if (response != null) {
-            cliente.excluirEndereco(response);
-        } else {
-            throw new Exception("Endereço não encontrado.");
-        }
-        return cliente;
-    }
-
-    public Cliente updateEndereco(UUID clienteId, UUID enderecoId, Endereco novoEnderecoASerAtualizado) throws Exception {
-        Cliente cliente = this.findCliente(clienteId);
-        if (cliente == null) {
-            throw new Exception("O cliente não foi encontrado.");
-        }
-        for (Endereco endereco: cliente.getEnderecos()) {
-            if (endereco.getId().equals(enderecoId)) {
-                endereco.setRua(novoEnderecoASerAtualizado.getRua());
-                endereco.setCidade(novoEnderecoASerAtualizado.getCidade());
-                endereco.setEstado(novoEnderecoASerAtualizado.getEstado());
-                endereco.setCep(novoEnderecoASerAtualizado.getCep());
-                return cliente;
-            }
-        }
-        throw new Exception("Endereço não encontrado.");
     }
 }

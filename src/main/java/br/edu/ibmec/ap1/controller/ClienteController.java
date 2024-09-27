@@ -56,31 +56,4 @@ public class ClienteController {
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
-    @PostMapping("{id}/associar-endereco")
-    public ResponseEntity<Cliente> associarEndereco(@PathVariable("id") UUID id, @Valid @RequestBody Endereco endereco) throws Exception {
-        Cliente response = service.associarEndereco(endereco, id);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{id}/associar-endereco/{enderecoId}")
-    public ResponseEntity<Endereco> getEnderecoById(@PathVariable("id") UUID id, @PathVariable UUID enderecoId) throws Exception {
-        Endereco response = service.getEnderecoById(id, enderecoId);
-        if (response == null)
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-
-    @DeleteMapping("{id}/excluir-endereco/{enderecoId}")
-    public ResponseEntity<Cliente> deleteEndereco(@PathVariable("id") UUID clienteId, @PathVariable("enderecoId") UUID enderecoId) throws Exception {
-        Cliente response = service.deleteEndereco(clienteId, enderecoId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @PutMapping("{id}/atualizar-endereco/{enderecoId}")
-    public ResponseEntity<Cliente> atualizarEndereco(@PathVariable("id") UUID clienteId, @PathVariable("enderecoId") UUID enderecoId, @RequestBody Endereco novosDados) throws Exception {
-        Cliente response = service.updateEndereco(clienteId, enderecoId, novosDados);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
 }

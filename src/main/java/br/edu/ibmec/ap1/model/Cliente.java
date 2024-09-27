@@ -1,9 +1,6 @@
 package br.edu.ibmec.ap1.model;
 import br.edu.ibmec.ap1.model.Endereco;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.validator.constraints.br.CPF;
 
@@ -34,6 +31,7 @@ public class Cliente {
     private LocalDate dataNascimento;
 
     @Size(min = 10, max = 11, message = "Por favor, digite seu telefone com o DDD e os dígitos de seu número de contato.")
+    @Pattern(regexp = "^\\d{11}$")
     private String telefone;
 
     private List<Endereco> enderecos = new ArrayList<>();
