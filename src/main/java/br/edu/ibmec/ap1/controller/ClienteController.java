@@ -26,7 +26,7 @@ public class ClienteController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Cliente> getClienteById(@PathVariable("id") UUID id) {
+    public ResponseEntity<Cliente> getClienteById(@PathVariable("id") int id) throws Exception{
         Cliente response = service.getItem(id);
         if (response == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -41,7 +41,7 @@ public class ClienteController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Cliente> updateCliente(@PathVariable("id") UUID id, @Valid @RequestBody Cliente novosDados) throws Exception{
+    public ResponseEntity<Cliente> updateCliente(@PathVariable("id") int id, @Valid @RequestBody Cliente novosDados) throws Exception{
         Cliente clienteAtualizado = service.updateCliente(id, novosDados);
         if (clienteAtualizado == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -49,7 +49,7 @@ public class ClienteController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Cliente> deleteCliente(@PathVariable("id") UUID id) {
+    public ResponseEntity<Cliente> deleteCliente(@PathVariable("id") int id) throws Exception{
         if (service.getItem(id) == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         service.deleteCliente(id);

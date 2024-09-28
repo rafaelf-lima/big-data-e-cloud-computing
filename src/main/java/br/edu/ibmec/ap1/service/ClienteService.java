@@ -3,6 +3,8 @@ package br.edu.ibmec.ap1.service;
 
 import br.edu.ibmec.ap1.model.Cliente;
 import br.edu.ibmec.ap1.model.Endereco;
+import br.edu.ibmec.ap1.repository.ClienteRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.ref.Cleaner;
@@ -10,85 +12,75 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+
 
 @Service
 public class ClienteService {
-    private static List<Cliente> Clientes = new ArrayList<>();
 
-    public List<Cliente> getAllItems(){
-        return ClienteService.Clientes;
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    public List<Cliente> getAllItems() {
+        return clienteRepository.findAll();
     }
 
-    public Cliente getItem(UUID id) {
-        return findCliente(id);
-    }
-
-    public Cliente findCliente(UUID id){
-        Cliente response = null;
-
-        for (Cliente cliente : Clientes){
-            if (cliente.getId().equals(id)){
-                response = cliente;
-                break;
-            }
-        }
-        return response;
+    public Cliente getItem(int id) throws Exception {
+        return clienteRepository.findById(id)
+                .orElseThrow(() -> new Exception("Cliente não encontrado."));
     }
 
     public Cliente createCliente(Cliente item) throws Exception {
-        if(!verificaIdade(item.getDataNascimento())) {
+        if (!verificaIdade(item.getDataNascimento())) {
             throw new Exception("Idade do cliente deve ser maior que 18 anos.");
         }
-        for (Cliente c : Clientes) {
-            if (c.getCpf().equals(item.getCpf())) {
-                throw new Exception("CPF já cadastrado.");
-            }
+
+        Optional<Cliente> clienteExistentePorCpf = clienteRepository.findByCpf(item.getCpf());
+        if (clienteExistentePorCpf.isPresent()) {
+            throw new Exception("CPF já cadastrado.");
         }
-        for (Cliente c : Clientes) {
-            if (c.getEmail().equals(item.getEmail())) {
-                throw new Exception("E-mail já cadastrado.");
-            }
+
+        Optional<Cliente> clienteExistentePorEmail = clienteRepository.findByEmail(item.getEmail());
+        if (clienteExistentePorEmail.isPresent()) {
+            throw new Exception("E-mail já cadastrado.");
         }
-        item.setId(UUID.randomUUID());
-        ClienteService.Clientes.add(item);
-        return item;
+
+        return clienteRepository.save(item);
     }
 
-    public Cliente updateCliente(UUID id, Cliente novoCliente) throws Exception {
-        Cliente novoClienteAtualizado = findCliente(id);
-        if (novoClienteAtualizado == null)
-            return null;
+    public Cliente updateCliente(int id, Cliente novoCliente) throws Exception {
+        Cliente clienteAtualizado = getItem(id);
 
-        if (!novoClienteAtualizado.getCpf().equals(novoCliente.getCpf())) {
+        if (!clienteAtualizado.getCpf().equals(novoCliente.getCpf())) {
             throw new Exception("Não é permitido alterar o CPF.");
         }
-        if (!novoClienteAtualizado.getDataNascimento().equals(novoCliente.getDataNascimento())) {
+        if (!clienteAtualizado.getDataNascimento().equals(novoCliente.getDataNascimento())) {
             throw new Exception("Não é permitido alterar a data de nascimento.");
         }
-        for (Cliente c : Clientes) {
-            if (!c.getId().equals(id) && c.getEmail().equals(novoCliente.getEmail())) {
-                throw new Exception("E-mail já cadastrado.");
-            }
+
+        Optional<Cliente> clienteExistentePorEmail = clienteRepository.findByEmail(novoCliente.getEmail());
+        if (clienteExistentePorEmail.isPresent() &&
+                clienteExistentePorEmail.get().getId() != (clienteAtualizado.getId())) {
+            throw new Exception("E-mail já cadastrado.");
         }
 
-        novoClienteAtualizado.setNome(novoCliente.getNome());
-        novoClienteAtualizado.setEmail(novoCliente.getEmail());
-        novoClienteAtualizado.setTelefone(novoCliente.getTelefone());
-        novoClienteAtualizado.setEnderecos(novoCliente.getEnderecos());
+        clienteAtualizado.setNome(novoCliente.getNome());
+        clienteAtualizado.setEmail(novoCliente.getEmail());
+        clienteAtualizado.setTelefone(novoCliente.getTelefone());
+        clienteAtualizado.setEnderecos(novoCliente.getEnderecos());
 
-        return novoClienteAtualizado;
+        return clienteRepository.save(clienteAtualizado);
     }
 
-    public void deleteCliente(UUID id){
-        Cliente clienteExcluido = findCliente(id);
-
-        if (clienteExcluido == null)
-            return;
-
-        Clientes.remove(clienteExcluido);
+    public void deleteCliente(int id) throws Exception {
+        if (!clienteRepository.existsById(id)) {
+            throw new Exception("Cliente não encontrado.");
+        }
+        clienteRepository.deleteById(id);
     }
-    public boolean verificaIdade(LocalDate dataNascimento){
+
+    public boolean verificaIdade(LocalDate dataNascimento) {
         int idade = Period.between(dataNascimento, LocalDate.now()).getYears();
         return idade >= 18;
     }

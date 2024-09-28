@@ -21,25 +21,25 @@ public class EnderecoController {
     private EnderecoService enderecoService;
 
     @PostMapping("/associar-endereco")
-    public ResponseEntity<Cliente> associarEndereco(@PathVariable("id") UUID id, @Valid @RequestBody Endereco endereco) throws Exception {
+    public ResponseEntity<Cliente> associarEndereco(@PathVariable("id") int id, @Valid @RequestBody Endereco endereco) throws Exception {
         Cliente response = enderecoService.associarEndereco(endereco, id);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/{enderecoId}")
-    public ResponseEntity<Endereco> getEnderecoById(@PathVariable("id") UUID id, @PathVariable UUID enderecoId) throws Exception {
+    public ResponseEntity<Endereco> getEnderecoById(@PathVariable("id") int id, @PathVariable int enderecoId) throws Exception {
         Endereco response = enderecoService.getEnderecoById(id, enderecoId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{enderecoId}")
-    public ResponseEntity<Cliente> deleteEndereco(@PathVariable("id") UUID clienteId, @PathVariable("enderecoId") UUID enderecoId) throws Exception {
+    public ResponseEntity<Cliente> deleteEndereco(@PathVariable("id") int clienteId, @PathVariable("enderecoId") int enderecoId) throws Exception {
         Cliente response = enderecoService.deleteEndereco(clienteId, enderecoId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PutMapping("/{enderecoId}")
-    public ResponseEntity<Cliente> atualizarEndereco(@PathVariable("id") UUID clienteId, @PathVariable("enderecoId") UUID enderecoId, @RequestBody Endereco novosDados) throws Exception {
+    public ResponseEntity<Cliente> atualizarEndereco(@PathVariable("id") int clienteId, @PathVariable("enderecoId") int enderecoId, @RequestBody Endereco novosDados) throws Exception {
         Cliente response = enderecoService.updateEndereco(clienteId, enderecoId, novosDados);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
