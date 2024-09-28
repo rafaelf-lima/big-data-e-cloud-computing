@@ -39,6 +39,7 @@ public class Endereco {
 
     @Column
     @NotNull(message = "Por favor, digite a sigla do estado.")
+    @Enumerated(EnumType.STRING)
     private Estado estado;
 
     @Column

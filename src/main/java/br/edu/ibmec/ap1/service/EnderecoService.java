@@ -1,5 +1,7 @@
 package br.edu.ibmec.ap1.service;
 
+import br.edu.ibmec.ap1.exception.ClienteException;
+import br.edu.ibmec.ap1.exception.EnderecoException;
 import br.edu.ibmec.ap1.model.Cliente;
 import br.edu.ibmec.ap1.model.Endereco;
 import br.edu.ibmec.ap1.repository.EnderecoRepository;
@@ -21,7 +23,7 @@ public class EnderecoService {
     public Cliente associarEndereco(Endereco endereco, int id) throws Exception {
         Cliente cliente = clienteService.getItem(id);
         if (cliente == null) {
-            throw new Exception("O cliente não foi encontrado.");
+            throw new ClienteException("O cliente não foi encontrado.");
         }
 
         Endereco enderecoSalvo = enderecoRepository.save(endereco);
@@ -39,7 +41,7 @@ public class EnderecoService {
     public Endereco findEndereco(int clienteId, int enderecoId) throws Exception {
         Cliente cliente = clienteService.getItem(clienteId);
         if (cliente == null) {
-            throw new Exception("O cliente não foi encontrado.");
+            throw new ClienteException("O cliente não foi encontrado.");
         }
 
         for (Endereco endereco : cliente.getEnderecos()) {
@@ -47,13 +49,13 @@ public class EnderecoService {
                 return endereco;
             }
         }
-        throw new Exception("O endereço não foi encontrado ou não pertence a este cliente.");
+        throw new EnderecoException("O endereço não foi encontrado ou não pertence a este cliente.");
     }
 
     public Cliente deleteEndereco(int clienteId, int enderecoId) throws Exception {
         Cliente cliente = clienteService.getItem(clienteId);
         if (cliente == null) {
-            throw new Exception("O cliente não foi encontrado.");
+            throw new ClienteException("O cliente não foi encontrado.");
         }
         Endereco enderecoExcluido = null;
         for (Endereco endereco : cliente.getEnderecos()) {
@@ -67,14 +69,14 @@ public class EnderecoService {
             enderecoRepository.delete(enderecoExcluido);
             return cliente;
         } else {
-            throw new Exception("Endereço não encontrado.");
+            throw new EnderecoException("Endereço não encontrado.");
         }
     }
 
     public Cliente updateEndereco(int clienteId, int enderecoId, Endereco novoEnderecoASerAtualizado) throws Exception {
         Cliente cliente = clienteService.getItem(clienteId);
         if (cliente == null) {
-            throw new Exception("O cliente não foi encontrado.");
+            throw new ClienteException("O cliente não foi encontrado.");
         }
         for (Endereco endereco : cliente.getEnderecos()) {
             if (endereco.getId() == enderecoId) {
@@ -88,6 +90,6 @@ public class EnderecoService {
                 return cliente;
             }
         }
-        throw new Exception("Endereço não encontrado.");
+        throw new EnderecoException("Endereço não encontrado.");
     }
 }

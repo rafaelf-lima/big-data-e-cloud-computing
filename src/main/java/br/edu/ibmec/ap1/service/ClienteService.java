@@ -1,6 +1,7 @@
 package br.edu.ibmec.ap1.service;
 
 
+import br.edu.ibmec.ap1.exception.ClienteException;
 import br.edu.ibmec.ap1.model.Cliente;
 import br.edu.ibmec.ap1.model.Endereco;
 import br.edu.ibmec.ap1.repository.ClienteRepository;
@@ -28,22 +29,22 @@ public class ClienteService {
 
     public Cliente getItem(int id) throws Exception {
         return clienteRepository.findById(id)
-                .orElseThrow(() -> new Exception("Cliente não encontrado."));
+                .orElseThrow(() -> new ClienteException("Cliente não encontrado."));
     }
 
     public Cliente createCliente(Cliente item) throws Exception {
         if (!verificaIdade(item.getDataNascimento())) {
-            throw new Exception("Idade do cliente deve ser maior que 18 anos.");
+            throw new ClienteException("Idade do cliente deve ser maior que 18 anos.");
         }
 
         Optional<Cliente> clienteExistentePorCpf = clienteRepository.findByCpf(item.getCpf());
         if (clienteExistentePorCpf.isPresent()) {
-            throw new Exception("CPF já cadastrado.");
+            throw new ClienteException("CPF já cadastrado.");
         }
 
         Optional<Cliente> clienteExistentePorEmail = clienteRepository.findByEmail(item.getEmail());
         if (clienteExistentePorEmail.isPresent()) {
-            throw new Exception("E-mail já cadastrado.");
+            throw new ClienteException("E-mail já cadastrado.");
         }
 
         return clienteRepository.save(item);
@@ -53,16 +54,16 @@ public class ClienteService {
         Cliente clienteAtualizado = getItem(id);
 
         if (!clienteAtualizado.getCpf().equals(novoCliente.getCpf())) {
-            throw new Exception("Não é permitido alterar o CPF.");
+            throw new ClienteException("Não é permitido alterar o CPF.");
         }
         if (!clienteAtualizado.getDataNascimento().equals(novoCliente.getDataNascimento())) {
-            throw new Exception("Não é permitido alterar a data de nascimento.");
+            throw new ClienteException("Não é permitido alterar a data de nascimento.");
         }
 
         Optional<Cliente> clienteExistentePorEmail = clienteRepository.findByEmail(novoCliente.getEmail());
         if (clienteExistentePorEmail.isPresent() &&
                 clienteExistentePorEmail.get().getId() != (clienteAtualizado.getId())) {
-            throw new Exception("E-mail já cadastrado.");
+            throw new ClienteException("E-mail já cadastrado.");
         }
 
         clienteAtualizado.setNome(novoCliente.getNome());
@@ -75,7 +76,7 @@ public class ClienteService {
 
     public void deleteCliente(int id) throws Exception {
         if (!clienteRepository.existsById(id)) {
-            throw new Exception("Cliente não encontrado.");
+            throw new ClienteException("Cliente não encontrado.");
         }
         clienteRepository.deleteById(id);
     }
