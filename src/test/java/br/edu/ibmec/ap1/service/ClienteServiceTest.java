@@ -1,6 +1,8 @@
 package br.edu.ibmec.ap1.service;
 
+import br.edu.ibmec.ap1.exception.ClienteException;
 import br.edu.ibmec.ap1.model.Cliente;
+import br.edu.ibmec.ap1.repository.ClienteRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,51 +11,58 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.LocalDate;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 @SpringBootTest
 public class ClienteServiceTest {
+
     @Autowired
     private ClienteService service;
 
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    private Cliente clientePadrao;
+
     @Test
     public void should_create_cliente() throws Exception{
-        Cliente cliente = new Cliente();
-        cliente.setNome("Rafael");
-        cliente.setEmail("rafael@teste.com");
-        cliente.setCpf("128.802.797-47");
-        cliente.setTelefone("2222222222");
-        cliente.setDataNascimento(LocalDate.of(2004, 1, 1));
+        clientePadrao = new Cliente();
+        clientePadrao.setNome("Rafael");
+        clientePadrao.setEmail("rafaasdasdadadsel@teste.com");
+        clientePadrao.setCpf("545.853.110-84");
+        clientePadrao.setTelefone("22222222222");
+        clientePadrao.setDataNascimento(LocalDate.of(2004, 1, 1));
 
-        Cliente resultado = service.createCliente(cliente);
-        UUID id = resultado.getId();
+        Cliente clienteCriado = clienteRepository.save(clientePadrao);
 
-        Assertions.assertNotNull(resultado);
-        Assertions.assertNotNull(resultado.getNome());
-        Assertions.assertNotNull(resultado.getCpf());
-        Assertions.assertNotNull(resultado.getEmail());
-        Assertions.assertNotNull(resultado.getTelefone());
-        Assertions.assertNotNull(resultado.getDataNascimento());
-        Assertions.assertEquals(id, cliente.getId());
+        assertNotNull(clienteCriado.getId());
+        assertEquals("Rafael", clienteCriado.getNome());
+        assertEquals("rafaasdasdadadsel@teste.com", clienteCriado.getEmail());
+        assertEquals("545.853.110-84", clienteCriado.getCpf());
+        assertEquals("22222222222", clienteCriado.getTelefone());
+        assertEquals(LocalDate.of(2004, 1, 1), clienteCriado.getDataNascimento());
+
     }
-
 
     @Test
     public void should_not_accept_duplicate_cpf() throws Exception {
-        Cliente cliente1 = new Cliente();
-        cliente1.setNome("Rafael");
-        cliente1.setCpf("128.802.797-47");
-        cliente1.setEmail("rafael@email.com");
-        cliente1.setTelefone("1234256789");
-        cliente1.setDataNascimento(LocalDate.of(2002, 1, 1));
-        service.createCliente(cliente1);
+        Cliente cliente5 = new Cliente();
+        cliente5.setNome("Rafael");
+        cliente5.setCpf("801.559.030-20");
+        cliente5.setEmail("rafadsadadasdeaaaaasaaaaadasdasdaaallll@email.com");
+        cliente5.setTelefone("22222222222");
+        cliente5.setDataNascimento(LocalDate.of(2002, 1, 1));
+        service.createCliente(cliente5);
 
         Cliente cliente2 = new Cliente();
         cliente2.setNome("Cláudio");
-        cliente2.setCpf("128.802.797-47");
-        cliente2.setEmail("Cláudio@email.com");
-        cliente2.setTelefone("2222222222");
+        cliente2.setCpf("801.559.030-20");
+        cliente2.setEmail("Claasadaaadsadadadsadassaaaadasdaasdaudio@email.com");
+        cliente2.setTelefone("22222222222");
         cliente2.setDataNascimento(LocalDate.of(2000, 10, 19));
 
-        Assertions.assertThrows(Exception.class, () -> {
+        Assertions.assertThrows(ClienteException.class, () -> {
             service.createCliente(cliente2);
         });
     }
@@ -65,10 +74,12 @@ public class ClienteServiceTest {
         cliente.setEmail("maria@teste.com.br");
         cliente.setCpf("123.456.111-11");
         cliente.setDataNascimento(LocalDate.of(2000, 12, 12));
-        cliente.setTelefone("1111111111");
+        cliente.setTelefone("22222222222");
 
         Assertions.assertThrows(Exception.class, () -> {
             service.createCliente(cliente);
         });
     }
+
+
 }
