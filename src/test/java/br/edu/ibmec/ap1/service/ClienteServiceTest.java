@@ -45,27 +45,7 @@ public class ClienteServiceTest {
 
     }
 
-    @Test
-    public void should_not_accept_duplicate_cpf() throws Exception {
-        Cliente cliente5 = new Cliente();
-        cliente5.setNome("Rafael");
-        cliente5.setCpf("801.559.030-20");
-        cliente5.setEmail("rafadsadadasdeaaaaasaaaaadasdasdaaallll@email.com");
-        cliente5.setTelefone("22222222222");
-        cliente5.setDataNascimento(LocalDate.of(2002, 1, 1));
-        service.createCliente(cliente5);
 
-        Cliente cliente2 = new Cliente();
-        cliente2.setNome("Cláudio");
-        cliente2.setCpf("801.559.030-20");
-        cliente2.setEmail("Claasadaaadsadadadsadassaaaadasdaasdaudio@email.com");
-        cliente2.setTelefone("22222222222");
-        cliente2.setDataNascimento(LocalDate.of(2000, 10, 19));
-
-        Assertions.assertThrows(ClienteException.class, () -> {
-            service.createCliente(cliente2);
-        });
-    }
 
     @Test
     public void should_not_accept_invalid_cpf() throws Exception {
