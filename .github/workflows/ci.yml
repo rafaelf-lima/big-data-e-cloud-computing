@@ -27,6 +27,8 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
         cache: maven
+    - name: Clean project
+      run: mvn clean --file pom.xml
     - name: Build with Maven
       run: mvn compile --file pom.xml
     - name: Running unit tests with Maven
