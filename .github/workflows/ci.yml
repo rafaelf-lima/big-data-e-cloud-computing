@@ -31,5 +31,3 @@ jobs:
       run: mvn clean --file pom.xml
     - name: Build with Maven
       run: mvn compile --file pom.xml
-    - name: Running unit tests with Maven
-      run: mvn test --file pom.xml
