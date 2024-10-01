@@ -39,7 +39,7 @@ public class EnderecoController {
     }
 
     @PutMapping("/{enderecoId}")
-    public ResponseEntity<Cliente> atualizarEndereco(@PathVariable("id") int clienteId, @PathVariable("enderecoId") int enderecoId, @RequestBody Endereco novosDados) throws Exception {
+    public ResponseEntity<Cliente> atualizarEndereco(@PathVariable("id") int clienteId, @PathVariable("enderecoId") int enderecoId, @Valid @RequestBody Endereco novosDados) throws Exception {
         Cliente response = enderecoService.updateEndereco(clienteId, enderecoId, novosDados);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
