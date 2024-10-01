@@ -2,6 +2,8 @@ package br.edu.ibmec.ap1.service;
 
 import br.edu.ibmec.ap1.exception.ClienteException;
 import br.edu.ibmec.ap1.model.Cliente;
+import br.edu.ibmec.ap1.model.Endereco;
+import br.edu.ibmec.ap1.model.Estado;
 import br.edu.ibmec.ap1.repository.ClienteRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,5 +64,26 @@ public class ClienteServiceTest {
         });
     }
 
+    @Test
+    public void should_not_accept_duplicate_cpf() throws Exception {
+        Cliente cliente1 = new Cliente();
+        cliente1.setNome("Rafael");
+        cliente1.setCpf("688.117.290-76");
+        cliente1.setEmail("raf@email.com");
+        cliente1.setTelefone("21212121212");
+        cliente1.setDataNascimento(LocalDate.of(1990, 1, 1));
+        service.createCliente(cliente1);
+
+        Cliente cliente2 = new Cliente();
+        cliente2.setNome("Rafael");
+        cliente2.setCpf("688.117.290-76");
+        cliente2.setEmail("rafa@email.com");
+        cliente2.setTelefone("21212121212");
+        cliente2.setDataNascimento(LocalDate.of(1990, 12, 11));
+
+        Assertions.assertThrows(Exception.class, () -> {
+            service.createCliente(cliente2);
+        });
+    }
 
 }
